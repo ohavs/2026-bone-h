@@ -1,94 +1,69 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { ReactNode } from "react";
+import { ElementType } from "react";
+import { useMounted } from "@/lib/hooks";
 
 type Props = {
   text: string;
   className?: string;
-  charClassName?: string;
   delay?: number;
   staggerChildren?: number;
   asWord?: boolean;
-  once?: boolean;
-  inView?: boolean;
-  as?: "h1" | "h2" | "h3" | "p" | "span";
-  children?: ReactNode;
+  as?: "h1" | "h2" | "h3" | "p" | "span" | "div";
 };
 
 /**
- * Splits a string into characters (or words) and reveals them with a slow,
- * organic "growing" entrance: y-offset + slight scale + opacity.
+ * SSR-safe text reveal. On server and initial client render, outputs
+ * plain text (no motion props, no inline styles). After client mount,
+ * upgrades to animated character/word reveal.
  */
 export default function TextReveal({
   text,
   className = "",
-  charClassName = "",
   delay = 0,
-  staggerChildren = 0.035,
+  staggerChildren = 0.04,
   asWord = false,
-  once = true,
-  inView = true,
   as = "span",
 }: Props) {
+  const mounted = useMounted();
   const reduce = useReducedMotion();
-  const Tag = motion[as] as typeof motion.span;
+  const Tag = as as ElementType;
+
+  // SSR + first client render: plain text — no Framer Motion
+  if (!mounted || reduce) {
+    return (
+      <Tag className={className} aria-label={text}>
+        {text}
+      </Tag>
+    );
+  }
 
   const tokens = asWord ? text.split(" ") : Array.from(text);
 
-  const container = {
-    hidden: {},
-    show: {
-      transition: {
-        delayChildren: delay,
-        staggerChildren: reduce ? 0 : staggerChildren,
-      },
-    },
-  };
-
-  const child = reduce
-    ? {
-        hidden: { opacity: 0 },
-        show: { opacity: 1, transition: { duration: 0.2 } },
-      }
-    : {
-        hidden: {
-          opacity: 0,
-          y: "0.5em",
-          scale: 0.95,
-        },
-        show: {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          transition: {
-            duration: 1,
-            ease: [0.16, 1, 0.3, 1] as const,
-          },
-        },
-      };
-
   return (
-    <Tag
-      className={className}
-      variants={container}
-      initial="hidden"
-      whileInView={inView ? "show" : undefined}
-      animate={inView ? undefined : "show"}
-      viewport={{ once, margin: "-10% 0px -10% 0px" }}
-      aria-label={text}
-    >
-      {tokens.map((t, i) => (
-        <motion.span
-          key={i}
-          variants={child}
-          className={`char inline-block ${charClassName}`}
-          style={{ whiteSpace: t === " " ? "pre" : "normal" }}
-          aria-hidden
-        >
-          {asWord ? t + (i < tokens.length - 1 ? " " : "") : t}
-        </motion.span>
-      ))}
+    <Tag className={className} aria-label={text}>
+      {tokens.map((t, i) => {
+        const isSpace = t === " ";
+        return (
+          <motion.span
+            key={i}
+            aria-hidden
+            className="inline-block"
+            style={{ whiteSpace: isSpace ? "pre" : "normal" }}
+            initial={{ opacity: 0, y: "0.5em" }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
+            transition={{
+              delay: delay + i * staggerChildren,
+              duration: 1,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+          >
+            {asWord ? t + (i < tokens.length - 1 ? " " : "") : t}
+          </motion.span>
+        );
+      })}
     </Tag>
   );
 }

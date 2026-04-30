@@ -2,10 +2,12 @@
 
 import { motion } from "framer-motion";
 import { FormEvent, useState } from "react";
+import { useMounted } from "@/lib/hooks";
 import TextReveal from "./TextReveal";
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
+  const mounted = useMounted();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -13,31 +15,32 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="relative py-[18vh] md:py-[24vh]">
+    <section id="contact" className="relative py-[14vh] md:py-[18vh]">
       <div className="mx-auto max-w-[1300px] px-6 md:px-12">
-        <div className="grid grid-cols-12 gap-x-6 gap-y-14">
-          <div className="col-span-12 md:col-span-7 md:col-start-6">
-            <div className="flex items-center gap-4">
-              <span className="h-px w-12 bg-bone-deep/40" />
-              <span className="text-[11px] uppercase tracking-[0.45em] text-bone-deep/70">
-                <span className="font-sans">Get in touch</span>
+        <div className="grid grid-cols-1 gap-14 md:grid-cols-12 md:gap-8">
+          {/* Heading & meta - on right (md:col-start-7) */}
+          <div className="md:col-span-6 md:col-start-7 md:order-2">
+            <div className="mb-6 flex items-center justify-end gap-4">
+              <span className="font-sans text-[11px] uppercase tracking-[0.4em] text-bone-deep/70">
+                Get in Touch
               </span>
+              <span className="h-px w-12 bg-bone-deep/40" />
             </div>
 
             <TextReveal
-              text="נשמח לשמוע אתכם — לאט, ובלי טפסים מסורבלים."
+              text="נשמח לשמוע מכם."
               as="h2"
-              className="mt-8 max-w-2xl text-right font-heb text-[clamp(2rem,4.5vw,3.6rem)] font-light leading-[1.1] tracking-[-0.03em] text-bone-ink"
+              className="block text-right font-heb text-[clamp(2rem,4.5vw,3.5rem)] font-light leading-[1.1] tracking-[-0.03em] text-bone-ink"
               asWord
-              staggerChildren={0.04}
+              staggerChildren={0.05}
             />
 
-            <p className="mt-6 max-w-md text-right text-[14px] leading-[1.8] text-bone-muted">
+            <p className="mt-6 max-w-md text-right text-[14px] leading-[1.8] text-bone-ink/70 ms-auto">
               נחזור אליכם תוך יום עבודה אחד. אנחנו עובדים עם מעט פרויקטים בשנה,
               ולכן מקפידים על שיחה פתוחה לפני כל החלטה.
             </p>
 
-            <div className="mt-12 flex flex-col gap-2 text-right text-[13px] text-bone-ink/80 md:gap-1">
+            <div className="mt-12 flex flex-col items-end gap-1 text-right text-[13px] text-bone-ink/85">
               <span>טבריה · כביש 90</span>
               <span dir="ltr" className="text-bone-deep">
                 +972 4 000 0000
@@ -48,12 +51,12 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* Form */}
-          <div className="col-span-12 md:col-span-5 md:col-start-8">
+          {/* Form on left (md:col-start-1) */}
+          <div className="md:col-span-6 md:col-start-1 md:order-1">
             <motion.form
               onSubmit={handleSubmit}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={mounted ? { opacity: 0, y: 30 } : false}
+              whileInView={mounted ? { opacity: 1, y: 0 } : undefined}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               viewport={{ once: true, margin: "-15% 0px" }}
               className="flex flex-col gap-2"
@@ -65,7 +68,7 @@ export default function Contact() {
               <FieldRow label="פרויקט" name="project" type="text" />
               <FieldArea label="הודעה" name="message" />
 
-              <div className="mt-10">
+              <div className="mt-10 flex justify-end">
                 <WaveSubmit sent={sent} />
               </div>
 
@@ -143,38 +146,18 @@ function WaveSubmit({ sent }: { sent: boolean }) {
       type="submit"
       disabled={sent}
       data-cursor="hover"
-      className="group relative inline-flex items-center gap-4 overflow-hidden rounded-full border border-bone-deep/30 px-7 py-3.5 text-[12px] uppercase tracking-[0.4em] text-bone-deep transition-colors duration-700 hover:text-bone-white disabled:opacity-60"
+      className="group relative inline-flex flex-row-reverse items-center gap-3 overflow-hidden rounded-full border border-bone-deep/40 px-7 py-3.5 text-[12px] uppercase tracking-[0.35em] text-bone-deep transition-colors duration-700 hover:text-bone-white disabled:opacity-60"
     >
-      {/* Wave fill */}
-      <span className="pointer-events-none absolute inset-0 -z-0 translate-y-full transition-transform duration-[1100ms] ease-out-expo group-hover:translate-y-0">
-        <svg
-          viewBox="0 0 1200 200"
-          preserveAspectRatio="none"
-          className="wave-anim absolute inset-x-0 -top-6 h-[140%] w-[200%]"
-          aria-hidden
-        >
-          <path
-            d="M0 100 C 150 30, 350 170, 600 100 C 850 30, 1050 170, 1200 100 L 1200 200 L 0 200 Z"
-            fill="#3D6F6A"
-          />
-        </svg>
-        <span className="absolute inset-0 bg-bone-deep" />
-      </span>
-
-      <span className="relative z-10 transition-transform duration-700 ease-out-expo group-hover:-translate-x-1">
+      {/* Wave fill on hover */}
+      <span className="pointer-events-none absolute inset-0 -z-0 translate-y-full bg-bone-deep transition-transform duration-[900ms] ease-out-expo group-hover:translate-y-0" />
+      <span className="relative z-10">
         {sent ? "נשלח" : "שלחו הודעה"}
       </span>
-      <svg
-        width="20"
-        height="10"
-        viewBox="0 0 20 10"
-        className="relative z-10"
-        aria-hidden
-      >
+      <svg width="14" height="9" viewBox="0 0 14 9" className="relative z-10" aria-hidden>
         <path
-          d="M19 5 H 2 M6 1 L 2 5 L 6 9"
+          d="M13 4.5 H 1 M5 1 L 1 4.5 L 5 8"
           stroke="currentColor"
-          strokeWidth="1"
+          strokeWidth="1.2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />

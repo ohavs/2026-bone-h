@@ -2,70 +2,70 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { useMounted } from "@/lib/hooks";
 import { stats } from "@/lib/data";
 import TextReveal from "./TextReveal";
 
 export default function About() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-20% 0px -20% 0px" });
+  const inView = useInView(ref, { once: true, margin: "-15% 0px -15% 0px" });
+  const mounted = useMounted();
 
   return (
-    <section id="about" className="relative py-[20vh] md:py-[28vh]">
+    <section
+      id="about"
+      className="relative bg-bone-white py-[14vh] md:py-[18vh]"
+    >
       <div className="mx-auto max-w-[1300px] px-6 md:px-12">
-        <div ref={ref} className="grid grid-cols-12 gap-x-6 gap-y-16">
-          {/* Right column (RTL primary): graceful prose */}
-          <div className="col-span-12 md:col-span-7 md:col-start-6">
-            <div className="flex items-center gap-4">
-              <span className="h-px w-12 bg-bone-deep/40" />
-              <span className="text-[11px] uppercase tracking-[0.45em] text-bone-deep/70">
-                <span className="font-sans">A few words</span>
-              </span>
-            </div>
+        <div ref={ref} className="grid grid-cols-1 gap-14 md:grid-cols-12 md:gap-8">
+          {/* Eyebrow on left (md:col-start-1) */}
+          <div className="flex items-center gap-4 md:col-span-3 md:col-start-1 md:items-start md:pt-2">
+            <span className="h-px w-12 bg-bone-deep/40" />
+            <span className="font-sans text-[11px] uppercase tracking-[0.4em] text-bone-deep/70">
+              About
+            </span>
+          </div>
 
-            <div className="mt-10 space-y-8 text-right md:text-right">
+          {/* Right column (RTL primary): graceful prose */}
+          <div className="md:col-span-9 md:col-start-4">
+            <div className="space-y-8 text-right">
               <TextReveal
                 text="אנחנו לא בונים מהר."
                 as="p"
-                className="font-heb text-[clamp(1.6rem,3vw,2.6rem)] font-light leading-[1.25] tracking-[-0.02em] text-bone-ink"
+                className="block font-heb text-[clamp(1.6rem,3vw,2.6rem)] font-light leading-[1.25] tracking-[-0.02em] text-bone-ink"
                 asWord
                 staggerChildren={0.06}
               />
               <TextReveal
                 text="אנחנו בונים בשקט — שיוודא שכל פרט יזדקק עוד שנה ועוד עשור."
                 as="p"
-                className="font-heb text-[clamp(1.2rem,2.2vw,1.8rem)] font-light leading-[1.45] text-bone-ink/80"
+                className="block font-heb text-[clamp(1.15rem,2vw,1.7rem)] font-light leading-[1.5] text-bone-ink/85"
                 asWord
                 staggerChildren={0.04}
               />
               <TextReveal
                 text="עבודה לאורך הירדן המערבי, מטבריה ועד הבקעה. בוטיק קטן, בעלי מקצוע מעטים, סטנדרט גבוה."
                 as="p"
-                className="text-[15px] leading-[1.8] text-bone-muted"
+                className="block max-w-2xl text-[15px] leading-[1.85] text-bone-ink/70"
                 asWord
                 staggerChildren={0.02}
               />
             </div>
-          </div>
 
-          {/* Left column: stats fluid reveal */}
-          <div className="col-span-12 md:col-span-4 md:col-start-9">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col gap-12 md:gap-16"
-            >
+            {/* Stats — horizontal row, no overlap */}
+            <div className="mt-16 grid grid-cols-3 gap-6 border-t border-bone-deep/15 pt-10 md:gap-12">
               {stats.map((s, i) => (
                 <FluidStat
                   key={s.label}
                   value={s.value}
                   suffix={s.suffix}
                   label={s.label}
-                  delay={0.2 + i * 0.25}
-                  inView={inView}
+                  delay={0.2 + i * 0.2}
+                  inView={inView && mounted}
+                  mounted={mounted}
                 />
               ))}
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
@@ -79,48 +79,42 @@ function FluidStat({
   label,
   delay,
   inView,
+  mounted,
 }: {
   value: string;
   suffix: string;
   label: string;
   delay: number;
   inView: boolean;
+  mounted: boolean;
 }) {
   return (
-    <div className="text-right md:text-right">
+    <div className="text-right">
       <motion.div
-        initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-        animate={
-          inView
-            ? { opacity: 1, y: 0, filter: "blur(0px)" }
-            : { opacity: 0, y: 30, filter: "blur(10px)" }
-        }
-        transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1], delay }}
-        className="flex items-baseline justify-end gap-3"
+        initial={mounted ? { opacity: 0, y: 20 } : false}
+        animate={inView ? { opacity: 1, y: 0 } : undefined}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay }}
+        className="flex flex-row-reverse items-baseline justify-end gap-2"
       >
-        <span className="font-heb text-[clamp(3.2rem,7vw,5.5rem)] font-light leading-none tracking-[-0.04em] text-bone-deep">
+        <span className="font-heb text-[clamp(2.4rem,5vw,4rem)] font-light leading-none tracking-[-0.04em] text-bone-deep">
           {value}
         </span>
         {suffix && (
-          <span className="font-heb text-[15px] text-bone-muted">
-            {suffix}
-          </span>
+          <span className="font-heb text-[13px] text-bone-muted">{suffix}</span>
         )}
       </motion.div>
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: delay + 0.4 }}
-        className="mt-2 text-[13px] tracking-wide text-bone-muted"
+        initial={mounted ? { opacity: 0 } : false}
+        animate={inView ? { opacity: 1 } : undefined}
+        transition={{
+          duration: 1,
+          ease: [0.16, 1, 0.3, 1],
+          delay: delay + 0.3,
+        }}
+        className="mt-2 text-[12px] tracking-wide text-bone-muted"
       >
         {label}
       </motion.div>
-      <motion.div
-        initial={{ scaleX: 0 }}
-        animate={inView ? { scaleX: 1 } : { scaleX: 0 }}
-        transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1], delay: delay + 0.5 }}
-        className="mt-6 h-px w-full origin-right bg-bone-deep/15"
-      />
     </div>
   );
 }

@@ -1,146 +1,86 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import {
-  ACTIVE_LABELS,
-  Project,
-  ProjectStatus,
-  projects,
-} from "@/lib/data";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useMounted } from "@/lib/hooks";
+import { projects } from "@/lib/data";
+import ProjectCard from "./ProjectCard";
 import TextReveal from "./TextReveal";
 
-const isActive = (s: ProjectStatus) => s !== "sold";
-
 export default function Projects() {
-  // Show curated selection (3-4 most recent/featured active projects)
-  const active = projects.filter((p) => isActive(p.status));
-  const featured = active.slice(0, 3);
+  const mounted = useMounted();
+
+  // Curated: 3 featured (latest active / construction)
+  const featured = projects
+    .filter((p) => p.status !== "sold")
+    .slice(0, 3);
 
   return (
-    <section id="projects" className="relative py-[12vh] md:py-[16vh]">
+    <section
+      id="projects"
+      className="relative overflow-hidden py-[14vh] md:py-[18vh]"
+    >
       <div className="mx-auto max-w-[1400px] px-6 md:px-12">
-        {/* Header */}
-        <div className="flex flex-col-reverse gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="flex flex-row-reverse items-center gap-4">
+        {/* Header — RTL: title on right, eyebrow on left */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:items-end">
+          <div className="order-2 flex items-center gap-4 md:order-1 md:justify-start">
             <span className="h-px w-12 bg-bone-deep/40" />
-            <span className="text-[11px] uppercase tracking-[0.45em] text-bone-deep/70">
-              <span className="font-sans">Featured Projects</span>
+            <span className="font-sans text-[11px] uppercase tracking-[0.4em] text-bone-deep/70">
+              Featured Projects · נבחרים
             </span>
           </div>
 
-          <TextReveal
-            text="פרויקטים בחירה"
-            as="h2"
-            className="text-right font-heb text-[clamp(2rem,4vw,3.2rem)] font-light leading-[1.1] tracking-[-0.02em] text-bone-ink"
-            staggerChildren={0.05}
-            asWord
-          />
+          <div className="order-1 md:order-2">
+            <TextReveal
+              text="פרויקטים נבחרים"
+              as="h2"
+              className="block text-right font-heb text-[clamp(2rem,5vw,4rem)] font-light leading-[1] tracking-[-0.03em] text-bone-ink"
+              staggerChildren={0.04}
+              asWord
+            />
+          </div>
         </div>
 
-        {/* Projects Grid — clean 3-column on desktop, 1 on mobile */}
-        <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-6">
-          {featured.map((p) => (
-            <ProjectCardCurated key={p.id} project={p} />
+        {/* Grid: 3 cards on desktop, 1 on mobile, with stagger entrance */}
+        <div className="mt-16 grid grid-cols-1 gap-6 md:mt-20 md:grid-cols-3 md:gap-7">
+          {featured.map((p, i) => (
+            <ProjectCard key={p.id} project={p} index={i} delay={0.1} />
           ))}
         </div>
 
-        {/* View All Button */}
+        {/* View All — prominent, elegant */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+          initial={mounted ? { opacity: 0, y: 30 } : false}
+          whileInView={mounted ? { opacity: 1, y: 0 } : undefined}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          className="mt-14 flex justify-center"
+          className="mt-16 flex justify-center"
         >
-          <a
+          <Link
             href="/projects"
             data-cursor="hover"
-            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-lg border border-bone-deep/30 px-8 py-4 text-[13px] uppercase tracking-[0.3em] text-bone-deep transition-all duration-500 hover:border-bone-deep/60 hover:bg-bone-deep/5"
+            className="group relative inline-flex flex-row-reverse items-center gap-4 overflow-hidden rounded-md border border-bone-deep/40 px-10 py-4 text-[12px] uppercase tracking-[0.35em] text-bone-deep transition-all duration-700 hover:border-bone-deep hover:bg-bone-deep hover:text-bone-white"
           >
-            <span className="relative z-10 transition-transform duration-500 ease-out-expo group-hover:-translate-x-1">
-              צפו בכל הפרויקטים
-            </span>
+            <span>צפו בכל הפרויקטים</span>
             <svg
-              width="16"
+              width="14"
               height="10"
-              viewBox="0 0 16 10"
+              viewBox="0 0 14 10"
               fill="none"
-              className="relative z-10 transition-transform duration-500 ease-out-expo group-hover:-translate-x-1"
+              className="transition-transform duration-700 ease-out-expo group-hover:-translate-x-1.5"
               aria-hidden
             >
               <path
-                d="M15 5 H 2 M6 1 L 2 5 L 6 9"
+                d="M13 5 H 1 M5 1 L 1 5 L 5 9"
                 stroke="currentColor"
-                strokeWidth="1"
+                strokeWidth="1.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                transform="scale(-1,1) translate(-16,0)"
               />
             </svg>
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>
-  );
-}
-
-function ProjectCardCurated({ project }: { project: Project }) {
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-      viewport={{ once: true, margin: "-10% 0px" }}
-      className="group flex flex-col overflow-hidden rounded-lg border border-bone-deep/10 bg-bone-white transition-all duration-500 hover:border-bone-deep/25 hover:shadow-lg"
-    >
-      {/* Image */}
-      <div className="relative h-64 overflow-hidden bg-bone-gray/10" data-cursor="view">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={project.image}
-          alt={`${project.title} — ${project.city}`}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out-expo group-hover:scale-105"
-          loading="lazy"
-        />
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-col gap-4 p-6">
-        <div className="flex flex-row-reverse items-baseline justify-between gap-4">
-          <span className="text-[11px] uppercase tracking-[0.3em] text-bone-deep/70">
-            {project.year}
-          </span>
-          <span className="text-[11px] uppercase tracking-[0.3em] text-bone-deep font-medium">
-            {ACTIVE_LABELS[project.status]}
-          </span>
-        </div>
-
-        <h3 className="font-heb text-right text-[1.4rem] font-light leading-[1.1] tracking-[-0.01em] text-bone-ink">
-          {project.title}
-        </h3>
-
-        <div className="flex flex-row-reverse items-center gap-2 text-[12px] text-bone-muted">
-          {project.units && <span>{project.units}</span>}
-          {project.units && <span>·</span>}
-          <span>{project.type}</span>
-          <span>·</span>
-          <span>{project.city}</span>
-        </div>
-
-        <p className="text-right text-[13px] leading-relaxed text-bone-ink/70">
-          {project.description}
-        </p>
-
-        <a
-          href={`#projects/${project.id}`}
-          data-cursor="hover"
-          className="mt-2 inline-flex flex-row-reverse items-center justify-end gap-2 py-2 text-[12px] uppercase tracking-[0.2em] text-bone-deep transition-colors hover:text-bone-deep/70"
-        >
-          <span>→</span>
-          <span>פרטים</span>
-        </a>
-      </div>
-    </motion.article>
   );
 }
