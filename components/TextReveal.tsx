@@ -54,17 +54,15 @@ export default function TextReveal({
     : {
         hidden: {
           opacity: 0,
-          y: "0.6em",
-          scale: 0.92,
-          filter: "blur(8px)",
+          y: "0.5em",
+          scale: 0.95,
         },
         show: {
           opacity: 1,
           y: 0,
           scale: 1,
-          filter: "blur(0px)",
           transition: {
-            duration: 1.4,
+            duration: 1,
             ease: [0.16, 1, 0.3, 1] as const,
           },
         },

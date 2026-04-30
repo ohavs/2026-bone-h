@@ -16,7 +16,7 @@ export default function Contact() {
     <section id="contact" className="relative py-[18vh] md:py-[24vh]">
       <div className="mx-auto max-w-[1300px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-x-6 gap-y-14">
-          <div className="col-span-12 md:col-span-7 md:col-start-1">
+          <div className="col-span-12 md:col-span-7 md:col-start-6">
             <div className="flex items-center gap-4">
               <span className="h-px w-12 bg-bone-deep/40" />
               <span className="text-[11px] uppercase tracking-[0.45em] text-bone-deep/70">

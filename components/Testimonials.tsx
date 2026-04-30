@@ -20,7 +20,7 @@ export default function Testimonials() {
     offset: ["start end", "end start"],
   });
 
-  const drift = useTransform(scrollYProgress, [0, 1], ["12%", "-12%"]);
+  const drift = useTransform(scrollYProgress, [0, 1], ["4%", "-4%"]);
 
   return (
     <section
@@ -101,11 +101,10 @@ function FloatingQuote({
   // Slow fade in + fade out as it passes through viewport
   const opacity = useTransform(
     scrollYProgress,
-    [0, 0.25, 0.55, 0.85],
+    [0, 0.2, 0.6, 1],
     [0, 1, 1, 0],
   );
-  const y = useTransform(scrollYProgress, [0, 1], ["6%", "-12%"]);
-  const blur = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [10, 0, 0, 8]);
+  const y = useTransform(scrollYProgress, [0, 1], ["2%", "-4%"]);
 
   return (
     <motion.div
@@ -115,7 +114,6 @@ function FloatingQuote({
         ...position,
         opacity,
         y,
-        filter: useTransform(blur, (b) => `blur(${b}px)`),
       }}
       className="will-change-transform"
     >

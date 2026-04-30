@@ -21,7 +21,6 @@ export default function CustomCursor() {
   const rx = useSpring(mx, { stiffness: 80, damping: 18, mass: 1.2 });
   const ry = useSpring(my, { stiffness: 80, damping: 18, mass: 1.2 });
 
-  const ringScale = useTransform(sx, () => 1);
 
   useEffect(() => {
     const canHover =
@@ -80,13 +79,12 @@ export default function CustomCursor() {
       {/* Outer liquid ring */}
       <motion.div
         aria-hidden
-        className="pointer-events-none fixed top-0 left-0 z-[100] mix-blend-multiply"
+        className="pointer-events-none fixed top-0 left-0 z-[100]"
         style={{
           x: rx,
           y: ry,
           translateX: "-50%",
           translateY: "-50%",
-          scale: ringScale,
         }}
       >
         <motion.div

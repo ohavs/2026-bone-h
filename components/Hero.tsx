@@ -18,22 +18,20 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
 
-  // The whole hero "sinks" — recedes into the page as user scrolls.
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 0.82]);
-  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "18%"]);
-  const heroBlur = useTransform(scrollYProgress, [0, 1], ["0px", reduce ? "0px" : "10px"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.85, 1], [1, 0.6, 0]);
+  // Subtle parallax — hero recedes smoothly without blur
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 0.88]);
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "12%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8, 1], [1, 0.75, 0.3]);
 
-  // Image moves slowest (deepest layer)
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "30%"]);
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1.05, reduce ? 1.05 : 1.18]);
+  // Image moves slowest (parallax depth)
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "20%"]);
 
-  // Text moves faster (washes over)
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "-18%"]);
-  const subY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "-32%"]);
+  // Text and labels move at natural scroll speed
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "-8%"]);
+  const subY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "-12%"]);
 
-  // Side label drift
-  const labelY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "-50%"]);
+  // Soft label drift
+  const labelY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "-30%"]);
 
   return (
     <section
@@ -46,15 +44,14 @@ export default function Hero() {
         style={{
           scale: heroScale,
           y: heroY,
-          filter: useTransform(heroBlur, (b) => `blur(${b})`),
           opacity: heroOpacity,
           transformOrigin: "50% 30%",
         }}
         className="sticky top-0 h-screen w-full overflow-hidden"
       >
-        {/* Hero image with Ken Burns */}
+        {/* Hero image with parallax */}
         <motion.div
-          style={{ y: imageY, scale: imageScale }}
+          style={{ y: imageY }}
           className="absolute inset-0 will-change-transform"
         >
           <div className="absolute inset-0">

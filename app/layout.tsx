@@ -46,13 +46,13 @@ export default function RootLayout({
     <html
       lang="he"
       dir="rtl"
-      className={`${cinzel.variable} ${josefin.variable} ${heebo.variable}`}
+      className={`${cinzel.variable} ${josefin.variable} ${heebo.variable} scroll-smooth`}
     >
-      <body className="font-heb bg-bone-white text-bone-ink overflow-x-hidden">
+      <body className="font-heb bg-bone-white text-bone-ink overflow-x-hidden antialiased">
         <SmoothScroll>
           <CustomCursor />
           <Navbar />
-          {children}
+          <main>{children}</main>
         </SmoothScroll>
       </body>
     </html>
