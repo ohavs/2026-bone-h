@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bone-white: #F7F5EE;
+  --bone-beige: #D8CDB9;
+  --bone-aqua: #A8C5C0;
+  --bone-deep: #3D6F6A;
+  --bone-gray: #B7AB9A;
+  --bone-ink: #1F3B38;
+  --bone-muted: #6F7E7C;
+}
+
+html,
+body {
+  background: var(--bone-white);
+  color: var(--bone-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Hide native cursor on devices with hover (custom cursor handles it) */
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Selection */
+::selection {
+  background: var(--bone-aqua);
+  color: var(--bone-ink);
+}
+
+/* Underline-only inputs */
+.field-underline {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(31, 59, 56, 0.2);
+  padding: 1rem 0;
+  font-size: 1rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--bone-ink);
+}
+
+.field-underline:focus {
+  border-color: var(--bone-deep);
+}
+
+.field-underline::placeholder {
+  color: rgba(31, 59, 56, 0.45);
+}
+
+/* Reduced motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Slow Ken Burns animation for hero image */
+@keyframes ken-burns {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.12) translate3d(-1%, -1.5%, 0);
+  }
+}
+
+.ken-burns {
+  animation: ken-burns 22s ease-out forwards;
+  will-change: transform;
+}
+
+/* Gradient mask helpers for fade reveals */
+.fade-mask-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent);
+  mask-image: linear-gradient(to bottom, #000 60%, transparent);
+}
+
+/* Wave button SVG path animation */
+@keyframes wave-shift {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.wave-anim path {
+  animation: wave-shift 6s linear infinite;
+}
+
+/* Marquee for projects separator */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  animation: marquee 60s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee,
+  .ken-burns,
+  .wave-anim path {
+    animation: none !important;
+  }
+}
+
+/* Vertical writing for accents */
+.vrl {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* Disable tap highlight */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Letter reveal */
+.char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
