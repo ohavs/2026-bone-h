@@ -9,3 +9,6 @@ next-env.d.ts
 # Python bytecode (skill scripts)
 __pycache__/
 *.pyc
+
+# Submissions data (personal information)
+data/

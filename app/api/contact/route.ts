@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { addSubmission } from "@/lib/submissions";
 
 export async function POST(request: Request) {
   try {
@@ -12,15 +13,16 @@ export async function POST(request: Request) {
       message?: string;
     };
 
-    // Basic validation
     if (!name || !email) {
       return NextResponse.json({ error: "שדות חובה חסרים" }, { status: 400 });
     }
 
-    // If env vars are not configured, log and return ok (dev mode)
+    // Always persist the submission
+    await addSubmission({ name, phone: phone ?? "", email, project: project ?? "", message: message ?? "" });
+
+    // If env vars are not configured, skip email (dev mode)
     if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
       console.warn("[contact] GMAIL_USER / GMAIL_APP_PASSWORD not set — skipping email");
-      console.info("[contact] Form data:", { name, phone, email, project, message });
       return NextResponse.json({ ok: true });
     }
 

@@ -60,7 +60,7 @@ export default function Hero() {
               className={`h-full w-full object-cover transition-opacity duration-[1200ms] ease-out ${
                 imageLoaded ? "opacity-100" : "opacity-0"
               }`}
-              fetchpriority="high"
+              fetchPriority="high"
               decoding="async"
             />
             {/* Soft white wash on image right edge to blend into bg */}

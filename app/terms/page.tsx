@@ -33,7 +33,7 @@ export default function TermsPage() {
         </p>
       </Section>
 
-      <Section title="הגבלת אחריות בנושא נדל\"ן">
+      <Section title={'הגבלת אחריות בנושא נדל"ן'}>
         <p>
           <strong>חשוב לשים לב:</strong>
         </p>
