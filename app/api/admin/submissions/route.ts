@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { readAll, save } from "@/lib/submissions";
-import { verifyToken } from "@/app/api/admin/login/route";
+import { verifyToken } from "@/lib/auth";
 
 function auth(request: Request): boolean {
   const token = request.headers.get("x-admin-token") ?? "";
