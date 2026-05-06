@@ -7,18 +7,44 @@ import TextReveal from "./TextReveal";
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const mounted = useMounted();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSent(true);
+    setLoading(true);
+    setError(false);
+
+    const form = e.currentTarget;
+    const data = {
+      name: (form.elements.namedItem("name") as HTMLInputElement).value,
+      phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
+      email: (form.elements.namedItem("email") as HTMLInputElement).value,
+      project: (form.elements.namedItem("project") as HTMLInputElement).value,
+      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+    };
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error();
+      setSent(true);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <section id="contact" className="relative py-[14vh] md:py-[18vh]">
       <div className="mx-auto max-w-[1300px] px-6 md:px-12">
         <div className="grid grid-cols-1 gap-14 md:grid-cols-12 md:gap-8">
-          {/* Heading & meta - on right (md:col-start-7) */}
+          {/* Heading & meta */}
           <div className="md:col-span-6 md:col-start-7 md:order-2">
             <div className="mb-6 flex items-center justify-end gap-4">
               <span className="font-sans text-[11px] uppercase tracking-[0.4em] text-bone-deep/70">
@@ -42,45 +68,58 @@ export default function Contact() {
 
             <div className="mt-12 flex flex-col items-end gap-1 text-right text-[13px] text-bone-ink/85">
               <span>טבריה · כביש 90</span>
-              <span dir="ltr" className="text-bone-deep">
+              <a
+                href="tel:+97240000000"
+                dir="ltr"
+                className="text-bone-deep transition-colors hover:text-bone-ink"
+              >
                 +972 4 000 0000
-              </span>
-              <span dir="ltr" className="text-bone-deep">
+              </a>
+              <a
+                href="mailto:hello@bone-h.co.il"
+                dir="ltr"
+                className="text-bone-deep transition-colors hover:text-bone-ink"
+              >
                 hello@bone-h.co.il
-              </span>
+              </a>
             </div>
           </div>
 
-          {/* Form on left (md:col-start-1) */}
+          {/* Form — wrapped in card */}
           <div className="md:col-span-6 md:col-start-1 md:order-1">
-            <motion.form
-              onSubmit={handleSubmit}
-              initial={mounted ? { opacity: 0, y: 30 } : false}
-              whileInView={mounted ? { opacity: 1, y: 0 } : undefined}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              viewport={{ once: true, margin: "-15% 0px" }}
-              className="flex flex-col gap-2"
-              aria-label="טופס יצירת קשר"
-            >
-              <FieldRow label="שם" name="name" type="text" />
-              <FieldRow label="טלפון" name="phone" type="tel" dir="ltr" />
-              <FieldRow label="אימייל" name="email" type="email" dir="ltr" />
-              <FieldRow label="פרויקט" name="project" type="text" />
-              <FieldArea label="הודעה" name="message" />
-
-              <div className="mt-10 flex justify-end">
-                <WaveSubmit sent={sent} />
-              </div>
-
-              <p
-                className="mt-4 text-right text-[12px] text-bone-muted"
-                aria-live="polite"
+            <div className="rounded-xl border border-bone-deep/10 bg-bone-white/70 p-7 shadow-sm backdrop-blur-sm md:p-10">
+              <motion.form
+                onSubmit={handleSubmit}
+                initial={mounted ? { opacity: 0, y: 30 } : false}
+                whileInView={mounted ? { opacity: 1, y: 0 } : undefined}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                viewport={{ once: true, margin: "-15% 0px" }}
+                className="flex flex-col gap-5"
+                aria-label="טופס יצירת קשר"
               >
-                {sent
-                  ? "תודה. ההודעה נשמרה — נחזור בקרוב."
-                  : "פרטיותכם שמורה. ההודעה לא נשלחת לרשימות תפוצה."}
-              </p>
-            </motion.form>
+                <FieldRow label="שם" name="name" type="text" required />
+                <FieldRow label="טלפון" name="phone" type="tel" dir="ltr" />
+                <FieldRow label="אימייל" name="email" type="email" dir="ltr" required />
+                <FieldRow label="פרויקט" name="project" type="text" />
+                <FieldArea label="הודעה" name="message" />
+
+                <div className="mt-6 flex justify-end">
+                  <WaveSubmit sent={sent} loading={loading} />
+                </div>
+
+                <p
+                  className="text-right text-[12px] text-bone-muted"
+                  aria-live="polite"
+                  role="status"
+                >
+                  {sent
+                    ? "✓ תודה. נחזור אליכם בקרוב."
+                    : error
+                    ? "אירעה שגיאה — אנא נסו שוב או פנו ישירות בטלפון."
+                    : "פרטיותכם שמורה. ההודעה לא נשלחת לרשימות תפוצה."}
+                </p>
+              </motion.form>
+            </div>
           </div>
         </div>
       </div>
@@ -93,19 +132,22 @@ function FieldRow({
   name,
   type,
   dir,
+  required,
 }: {
   label: string;
   name: string;
   type: string;
   dir?: "ltr" | "rtl";
+  required?: boolean;
 }) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-1.5">
       <label
         htmlFor={name}
         className="text-right text-[11px] uppercase tracking-[0.3em] text-bone-deep/70"
       >
         {label}
+        {required && <span className="ms-1 text-bone-deep/50" aria-label="שדה חובה">*</span>}
       </label>
       <input
         id={name}
@@ -115,6 +157,7 @@ function FieldRow({
         className="field-underline text-right"
         autoComplete="off"
         data-cursor="hover"
+        required={required}
       />
     </div>
   );
@@ -122,7 +165,7 @@ function FieldRow({
 
 function FieldArea({ label, name }: { label: string; name: string }) {
   return (
-    <div className="mt-2 flex flex-col">
+    <div className="flex flex-col gap-1.5">
       <label
         htmlFor={name}
         className="text-right text-[11px] uppercase tracking-[0.3em] text-bone-deep/70"
@@ -140,28 +183,30 @@ function FieldArea({ label, name }: { label: string; name: string }) {
   );
 }
 
-function WaveSubmit({ sent }: { sent: boolean }) {
+function WaveSubmit({ sent, loading }: { sent: boolean; loading: boolean }) {
   return (
     <button
       type="submit"
-      disabled={sent}
+      disabled={sent || loading}
       data-cursor="hover"
-      className="group relative inline-flex flex-row-reverse items-center gap-3 overflow-hidden rounded-full border border-bone-deep/40 px-7 py-3.5 text-[12px] uppercase tracking-[0.35em] text-bone-deep transition-colors duration-700 hover:text-bone-white disabled:opacity-60"
+      aria-busy={loading}
+      className="group relative inline-flex flex-row-reverse items-center gap-3 overflow-hidden rounded-full border border-bone-deep/40 px-7 py-3.5 text-[12px] uppercase tracking-[0.35em] text-bone-deep transition-colors duration-700 hover:text-bone-white disabled:opacity-60 disabled:cursor-not-allowed"
     >
-      {/* Wave fill on hover */}
       <span className="pointer-events-none absolute inset-0 -z-0 translate-y-full bg-bone-deep transition-transform duration-[900ms] ease-out-expo group-hover:translate-y-0" />
       <span className="relative z-10">
-        {sent ? "נשלח" : "שלחו הודעה"}
+        {loading ? "שולח..." : sent ? "נשלח" : "שלחו הודעה"}
       </span>
-      <svg width="14" height="9" viewBox="0 0 14 9" className="relative z-10" aria-hidden>
-        <path
-          d="M13 4.5 H 1 M5 1 L 1 4.5 L 5 8"
-          stroke="currentColor"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      {!sent && (
+        <svg width="14" height="9" viewBox="0 0 14 9" className="relative z-10" aria-hidden>
+          <path
+            d="M13 4.5 H 1 M5 1 L 1 4.5 L 5 8"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
     </button>
   );
 }

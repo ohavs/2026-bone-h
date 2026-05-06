@@ -56,8 +56,8 @@ export default function Testimonials() {
           </div>
         </div>
 
-        {/* Quotes — clean grid, no absolute positioning */}
-        <div className="mt-20 grid grid-cols-1 gap-x-10 gap-y-16 md:grid-cols-2 md:gap-y-24 lg:grid-cols-3">
+        {/* Quotes — clean grid */}
+        <div className="mt-20 grid grid-cols-1 gap-x-10 gap-y-0 md:grid-cols-2 md:gap-y-24 lg:grid-cols-3">
           {testimonials.map((t, i) => (
             <Quote
               key={t.id}
@@ -97,12 +97,18 @@ function Quote({
         delay: index * 0.15,
       }}
       viewport={{ once: true, margin: "-10% 0px" }}
-      className={`text-right ${index === 1 ? "lg:translate-y-12" : ""}`}
+      className={`text-right ${
+        index > 0 ? "border-t border-bone-deep/10 pt-12 md:border-0 md:pt-0" : ""
+      } ${index === 1 ? "lg:translate-y-12" : ""}`}
     >
-      <span className="font-heb text-3xl text-bone-deep/30 select-none">
+      {/* Large decorative quote mark */}
+      <span
+        aria-hidden
+        className="block font-heb text-7xl leading-none text-bone-aqua/50 select-none"
+      >
         «
       </span>
-      <blockquote className="mt-2 font-heb text-[clamp(1.1rem,1.8vw,1.4rem)] font-light leading-[1.55] text-bone-ink">
+      <blockquote className="mt-3 font-heb text-[clamp(1.1rem,1.8vw,1.4rem)] font-light leading-[1.6] text-bone-ink">
         {quote}
       </blockquote>
       <div className="mt-6 flex flex-row-reverse items-center justify-end gap-3">

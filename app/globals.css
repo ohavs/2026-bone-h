@@ -153,6 +153,65 @@ html.lenis body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ─── Accessibility widget modes ──────────────────────────────────────────── */
+
+html.a11y-large-fonts {
+  font-size: 120%;
+}
+
+html.a11y-high-contrast {
+  filter: contrast(1.25) brightness(0.97);
+}
+
+html.a11y-underline-links a {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ─── Legal page prose ─────────────────────────────────────────────────────── */
+
+.legal-prose h2 {
+  font-family: var(--font-heebo), system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 1.2rem;
+  color: var(--bone-ink);
+  margin-bottom: 1rem;
+}
+
+.legal-prose p {
+  font-size: 0.875rem;
+  line-height: 1.85;
+  color: rgba(31, 59, 56, 0.8);
+  margin-bottom: 0.75rem;
+}
+
+.legal-prose ul {
+  list-style: disc;
+  padding-right: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.legal-prose li {
+  font-size: 0.875rem;
+  line-height: 1.85;
+  color: rgba(31, 59, 56, 0.8);
+  margin-bottom: 0.25rem;
+}
+
+.legal-prose strong {
+  font-weight: 500;
+  color: var(--bone-ink);
+}
+
 /* Letter reveal */
 .char {
   display: inline-block;

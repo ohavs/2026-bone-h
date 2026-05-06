@@ -4,6 +4,9 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
 import Navbar from "@/components/Navbar";
+import SkipLink from "@/components/SkipLink";
+import CookieBanner from "@/components/CookieBanner";
+import AccessibilityWidget from "@/components/AccessibilityWidget";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -49,11 +52,14 @@ export default function RootLayout({
       className={`${cinzel.variable} ${josefin.variable} ${heebo.variable}`}
     >
       <body className="font-heb bg-bone-white text-bone-ink overflow-x-hidden antialiased">
+        <SkipLink />
         <SmoothScroll>
           <CustomCursor />
           <Navbar />
-          <main>{children}</main>
+          <main id="main-content">{children}</main>
         </SmoothScroll>
+        <CookieBanner />
+        <AccessibilityWidget />
       </body>
     </html>
   );
