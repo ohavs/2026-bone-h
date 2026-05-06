@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import { ElementType } from "react";
+import { motion, useReducedMotion, useInView } from "framer-motion";
+import { ElementType, useRef } from "react";
 import { useMounted } from "@/lib/hooks";
 
 type Props = {
@@ -17,6 +17,9 @@ type Props = {
  * SSR-safe text reveal. On server and initial client render, outputs
  * plain text (no motion props, no inline styles). After client mount,
  * upgrades to animated character/word reveal.
+ *
+ * Uses a single IntersectionObserver per component (via useInView on the
+ * container) instead of one per character/word token.
  */
 export default function TextReveal({
   text,
@@ -28,7 +31,10 @@ export default function TextReveal({
 }: Props) {
   const mounted = useMounted();
   const reduce = useReducedMotion();
-  const Tag = as as ElementType;
+  const containerRef = useRef<HTMLElement>(null);
+  const inView = useInView(containerRef, { once: true, margin: "-10% 0px -10% 0px" });
+
+  const Tag = as as any;
 
   // SSR + first client render: plain text — no Framer Motion
   if (!mounted || reduce) {
@@ -42,7 +48,7 @@ export default function TextReveal({
   const tokens = asWord ? text.split(" ") : Array.from(text);
 
   return (
-    <Tag className={className} aria-label={text}>
+    <Tag ref={containerRef} className={className} aria-label={text}>
       {tokens.map((t, i) => {
         const isSpace = t === " ";
         return (
@@ -52,8 +58,7 @@ export default function TextReveal({
             className="inline-block"
             style={{ whiteSpace: isSpace ? "pre" : "normal" }}
             initial={{ opacity: 0, y: "0.5em" }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
+            animate={inView ? { opacity: 1, y: 0 } : undefined}
             transition={{
               delay: delay + i * staggerChildren,
               duration: 1,

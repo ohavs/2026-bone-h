@@ -49,6 +49,8 @@ export default function Hero() {
               src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=85"
               alt="פרויקט יוקרה — בונה הירדן המערבי"
               className="h-full w-full object-cover"
+              fetchpriority="high"
+              decoding="async"
             />
             {/* Soft white wash on image right edge to blend into bg */}
             <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-bone-white to-transparent md:block" />

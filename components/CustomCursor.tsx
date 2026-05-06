@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 type CursorState = "default" | "hover" | "drag" | "view";
 
@@ -9,6 +9,8 @@ export default function CustomCursor() {
   const [state, setState] = useState<CursorState>("default");
   const [enabled, setEnabled] = useState(false);
   const [label, setLabel] = useState<string>("");
+  const stateRef = useRef<CursorState>("default");
+  const labelRef = useRef<string>("");
 
   const mx = useMotionValue(-100);
   const my = useMotionValue(-100);
@@ -46,16 +48,27 @@ export default function CustomCursor() {
         "a, button, [role='button'], input, textarea, [data-cursor]",
       ) as HTMLElement | null;
 
+      let newState: CursorState;
+      let newLabel: string;
+
       if (interactive) {
         const dataCursor = interactive.getAttribute("data-cursor");
-        const dataLabel = interactive.getAttribute("data-cursor-label") ?? "";
-        setLabel(dataLabel);
-        if (dataCursor === "view") setState("view");
-        else if (dataCursor === "drag") setState("drag");
-        else setState("hover");
+        newLabel = interactive.getAttribute("data-cursor-label") ?? "";
+        if (dataCursor === "view") newState = "view";
+        else if (dataCursor === "drag") newState = "drag";
+        else newState = "hover";
       } else {
-        setState("default");
-        setLabel("");
+        newState = "default";
+        newLabel = "";
+      }
+
+      if (newState !== stateRef.current) {
+        stateRef.current = newState;
+        setState(newState);
+      }
+      if (newLabel !== labelRef.current) {
+        labelRef.current = newLabel;
+        setLabel(newLabel);
       }
     };
 

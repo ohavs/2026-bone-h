@@ -32,7 +32,7 @@ export default function ProjectCard({
         delay: delay + index * 0.12,
       }}
       viewport={{ once: true, margin: "-8% 0px" }}
-      className="group flex flex-col overflow-hidden rounded-lg border border-bone-deep/10 bg-bone-white transition-all duration-700 ease-out-expo hover:border-bone-deep/30 hover:shadow-[0_20px_60px_-30px_rgba(31,59,56,0.25)]"
+      className="group flex flex-col overflow-hidden rounded-lg border border-bone-deep/10 bg-bone-white transition-[border-color,box-shadow] duration-700 ease-out-expo hover:border-bone-deep/30 hover:shadow-[0_20px_60px_-30px_rgba(31,59,56,0.25)]"
     >
       {/* Image */}
       <div
@@ -44,7 +44,7 @@ export default function ProjectCard({
         <img
           src={project.image}
           alt={`${project.title} — ${project.city}`}
-          className={`h-full w-full object-cover transition-all duration-[1400ms] ease-out-expo group-hover:scale-[1.04] ${
+          className={`h-full w-full object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.04] ${
             project.status === "sold" ? "saturate-[0.6]" : ""
           }`}
           loading="lazy"

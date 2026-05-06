@@ -18,7 +18,6 @@ body {
   color: var(--bone-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
 /* Hide native cursor on devices with hover (custom cursor handles it) */
@@ -157,5 +156,4 @@ html.lenis body {
 /* Letter reveal */
 .char {
   display: inline-block;
-  will-change: transform, opacity;
 }
