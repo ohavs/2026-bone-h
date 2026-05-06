@@ -6,7 +6,7 @@ import {
   useTransform,
   useReducedMotion,
 } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useMounted } from "@/lib/hooks";
 import TextReveal from "./TextReveal";
 
@@ -14,6 +14,7 @@ export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const mounted = useMounted();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -44,11 +45,21 @@ export default function Hero() {
           className="absolute inset-y-0 left-0 w-full md:w-[58%] will-change-transform"
         >
           <div className="relative h-full w-full overflow-hidden">
+            {/* Warm skeleton — visible until image loads, then cross-fades out */}
+            <div
+              aria-hidden
+              className={`absolute inset-0 z-10 bg-bone-beige/50 transition-opacity duration-[1200ms] ease-out ${
+                imageLoaded ? "opacity-0 pointer-events-none" : "opacity-100"
+              }`}
+            />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=85"
               alt="פרויקט יוקרה — בונה הירדן המערבי"
-              className="h-full w-full object-cover"
+              onLoad={() => setImageLoaded(true)}
+              className={`h-full w-full object-cover transition-opacity duration-[1200ms] ease-out ${
+                imageLoaded ? "opacity-100" : "opacity-0"
+              }`}
               fetchpriority="high"
               decoding="async"
             />

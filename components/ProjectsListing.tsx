@@ -28,7 +28,7 @@ export default function ProjectsListing() {
   }, [filter]);
 
   return (
-    <div className="relative min-h-screen pt-32 pb-24 md:pt-40">
+    <div className="relative min-h-screen pt-28 pb-24 md:pt-40">
       <div className="mx-auto max-w-[1400px] px-6 md:px-12">
         {/* Back link */}
         <motion.div
@@ -40,7 +40,7 @@ export default function ProjectsListing() {
           <Link
             href="/"
             data-cursor="hover"
-            className="group inline-flex flex-row-reverse items-center gap-2 text-[11px] uppercase tracking-[0.3em] text-bone-muted transition-colors hover:text-bone-deep"
+            className="group inline-flex flex-row-reverse items-center gap-2 min-h-[44px] text-[12px] uppercase tracking-[0.3em] text-bone-muted transition-colors hover:text-bone-deep"
           >
             <span>חזרה לדף הבית</span>
             <svg width="14" height="9" viewBox="0 0 14 9" fill="none" aria-hidden>
@@ -67,7 +67,7 @@ export default function ProjectsListing() {
             <TextReveal
               text="כל הפרויקטים"
               as="h1"
-              className="block text-right font-heb text-[clamp(2.5rem,7vw,6rem)] font-light leading-[0.95] tracking-[-0.04em] text-bone-ink"
+              className="block text-right font-heb text-[clamp(2rem,7vw,6rem)] font-light leading-[0.95] tracking-[-0.04em] text-bone-ink"
               staggerChildren={0.06}
               asWord
             />
@@ -83,41 +83,45 @@ export default function ProjectsListing() {
           </motion.p>
         </header>
 
-        {/* Filter bar */}
+        {/* Filter bar — scrolls horizontally on mobile, wraps on desktop */}
         <motion.div
           initial={mounted ? { opacity: 0 } : false}
           animate={mounted ? { opacity: 1 } : undefined}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.7 }}
-          className="mt-14 flex flex-wrap items-center justify-end gap-2 border-b border-bone-deep/15 pb-6 md:gap-4"
+          className="mt-14 border-b border-bone-deep/15 pb-6"
         >
-          {filters.map((f) => {
-            const isActive = filter === f.value;
-            const count =
-              f.value === "all"
-                ? projects.length
-                : projects.filter((p) => p.status === f.value).length;
-            return (
-              <button
-                key={f.value}
-                onClick={() => setFilter(f.value)}
-                data-cursor="hover"
-                className={`group relative flex flex-row-reverse items-baseline gap-2 rounded-full px-4 py-2 text-[12px] uppercase tracking-[0.25em] transition-all duration-500 ${
-                  isActive
-                    ? "bg-bone-deep text-bone-white"
-                    : "border border-bone-deep/20 bg-transparent text-bone-ink/70 hover:border-bone-deep/50 hover:text-bone-deep"
-                }`}
-              >
-                <span>{f.label}</span>
-                <span
-                  className={`text-[10px] ${
-                    isActive ? "text-bone-white/60" : "text-bone-muted/70"
-                  }`}
-                >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
+          <div className="-mx-6 overflow-x-auto px-6 md:mx-0 md:overflow-x-visible md:px-0">
+            <div className="flex min-w-max items-center gap-2 md:min-w-0 md:flex-wrap md:justify-end md:gap-3">
+              {filters.map((f) => {
+                const isActive = filter === f.value;
+                const count =
+                  f.value === "all"
+                    ? projects.length
+                    : projects.filter((p) => p.status === f.value).length;
+                return (
+                  <button
+                    key={f.value}
+                    onClick={() => setFilter(f.value)}
+                    data-cursor="hover"
+                    className={`group relative flex flex-row-reverse items-center gap-2 rounded-full px-5 py-3 text-[13px] uppercase tracking-[0.2em] transition-[background-color,border-color,color] duration-500 md:px-4 md:py-2 md:text-[12px] md:tracking-[0.25em] ${
+                      isActive
+                        ? "bg-bone-deep text-bone-white"
+                        : "border border-bone-deep/20 bg-transparent text-bone-ink/70 hover:border-bone-deep/50 hover:text-bone-deep"
+                    }`}
+                  >
+                    <span className="whitespace-nowrap">{f.label}</span>
+                    <span
+                      className={`text-[11px] tabular-nums ${
+                        isActive ? "text-bone-white/60" : "text-bone-muted/70"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </motion.div>
 
         {/* Grid with stagger */}
