@@ -11,27 +11,46 @@ export default function Contact() {
   const [error, setError] = useState(false);
   const mounted = useMounted();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(false);
 
     const form = e.currentTarget;
-    const data = {
-      name: (form.elements.namedItem("name") as HTMLInputElement).value,
-      phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
-      email: (form.elements.namedItem("email") as HTMLInputElement).value,
-      project: (form.elements.namedItem("project") as HTMLInputElement).value,
-      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
-    };
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const phone = (form.elements.namedItem("phone") as HTMLInputElement).value;
+    const project = (form.elements.namedItem("project") as HTMLInputElement).value;
+    const message = (form.elements.namedItem("message") as HTMLTextAreaElement).value;
+
+    // Validate at least name/email are filled
+    if (!name || !email) {
+      setError(true);
+      setLoading(false);
+      return;
+    }
+
+    // Build WhatsApp message with form data
+    const whatsappMessage = `
+שלום, בחרתי ליצור קשר דרך האתר.
+
+שמי: ${name}
+אימייל: ${email}
+${phone ? `טלפון: ${phone}` : ""}
+${project ? `פרויקט: ${project}` : ""}
+
+ההודעה שלי:
+${message}
+    `.trim();
+
+    // Encode for URL
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+
+    // Open WhatsApp Web with pre-filled message
+    const whatsappUrl = `https://wa.me/972505359750/?text=${encodedMessage}`;
 
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error();
+      window.open(whatsappUrl, "_blank");
       setSent(true);
     } catch {
       setError(true);
