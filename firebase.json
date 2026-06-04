@@ -1,0 +1,28 @@
+{
+  "hosting": {
+    "public": "out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "redirects": [
+      {
+        "source": "/admin",
+        "destination": "/admin/index.html",
+        "type": 200
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/404.html"
+      }
+    ]
+  },
+  "emulators": {
+    "hosting": {
+      "port": 5000
+    }
+  }
+}
